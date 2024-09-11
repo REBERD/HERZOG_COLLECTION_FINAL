@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Herzog Collection</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yeseva+One&display=swap" rel="stylesheet">
+    <!-- Include Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<style>
+body {
+  font-family: "Lato", sans-serif}
+.mySlides {display: none}
+.mySlides2 {display:none}
+.w3-tag, .fa {cursor:pointer}
+.w3-tag {height:15px;width:15px;padding:0;margin-top:6px}
+.popup-content {
+            max-height: 150px; /* Adjust the height as needed */
+            overflow-y: auto;
+        }
+#map {
+            width: 100%;
+            height: 100%;
+            position: relative
+        }
+.leaflet-control-reset {
+            background: white;
+            padding: 8px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+.leaflet-control-reset:hover {
+            background: #f0f0f0;
+        }  
+.reset-icon {
+            width: 15px; /* Adjust icon size as needed */
+            height: 15px; /* Adjust icon size as needed */
+            vertical-align: middle;
+        }  
+.center-chart {
+    margin: 0 auto;
+  }
+
+  .nav-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .w3-bar {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0px -4px;
+}
+
+/* Create four equal columns that sits next to each other */
+.column {
+  flex: 25%;
+  max-width: 25%;
+  padding: 0px 4px;
+  box-sizing: border-box; /* Add this to include padding in width */
+}
+
+/* Container to position text over images */
+.container {
+  position: relative;
+  width: 100%;
+  margin-top: 8px; /* Space between images */
+}
+
+.container img {
+  width: 100%;
+  height: auto;
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Black background with transparency */
+  color: #f1f1f1; /* White text color */
+  width: 100%;
+  text-align: center;
+  padding: 10px 0;
+  opacity: 0; /* Hide the overlay initially */
+  transition: opacity 0.5s; /* Smooth transition for the overlay */
+}
+
+.container:hover .overlay {
+  opacity: 1; /* Show the overlay on hover */
+}
+
+/* Responsive layout - makes a two column-layout instead of four columns */
+@media screen and (max-width: 800px) {
+  .column {
+    flex: 50%;
+    max-width: 50%;
+  }
+}
+
+/* Responsive layout - makes the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .column {
+    flex: 100%;
+    max-width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Page content -->
+<div class="w3-content" style="max-width:2000px">
+</div>
+
+  <!-- Automatic Slideshow Images -->
+  <div class="mySlides w3-display-container w3-center">
+    <img src="Herzog_gyujtemeny_2.jpeg" style="width:100%; max-height:min-content; opacity: 0.8" >
+    <div class="w3-display-bottommiddle w3-text-white w3-padding-10 w3-hide-small">
+      <h1 style="color: black; font-size: 150px; font-family: 'Yeseva One'">HERZOG COLLECTION</h1>
+      <p style="color: black; font-size: 15px; font-family:'Lato'; font-weight: 100"><b>Interieur of the Palace on the Andrássy Street 93. in Budapest</b></p>   
+    </div>
+  </div>
+  <div class="mySlides w3-display-container w3-center">
+    <img src="Herzog_gyujtemeny.jpeg" style="width: 100%; max-height:min-content; opacity: 0.8">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-10 w3-hide-small">
+        <h1 style="color: white; font-size: 150px; font-family: 'Yeseva One'">HERZOG COLLECTION</h1>
+        <p style="color: white; font-size: 15px; font-family:'Lato'; font-weight: 100"><b>Confiscation of artworks</b><p>    
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <div class="nav-container">
+  <div class="w3-bar w3-black w3-card">
+    <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large" href="javascript:void(0)" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#description" class="w3-bar-item w3-button w3-padding-large">DESCRIPTION</a>
+    <a href="#gallery" class="w3-bar-item w3-button w3-padding-large w3-hide-small">GALLERY</a>
+    <a href="#data" class="w3-bar-item w3-button w3-padding-large w3-hide-small">DATA</a>
+    <a href="#map" class="w3-bar-item w3-button w3-padding-large w3-hide-small">LOCATION</a>
+    <a href="#time" class="w3-bar-item w3-button w3-padding-large">PROVENANCE</a>
+    <a href="#storyline" class="w3-bar-item w3-button w3-padding-large w3-hide-small">STORYLINE</a>
+    <a href="#lost" class="w3-bar-item w3-button w3-padding-large w3-hide-small">WANTED</a>
+  </div>
+</div>
+
+<!-- Navbar on small screens (remove the onclick attribute if you want the navbar to always show on top of the content when clicking on the links) -->
+<div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium">
+  <a href="#description" class="w3-bar-item w3-button w3-padding-large">DESCRIPTION</a>
+  <a href="#gallery" class="w3-bar-item w3-button w3-padding-large">GALLERY</a>
+  <a href="#data" class="w3-bar-item w3-button w3-padding-large">DATA</a>
+  <a href="#map" class="w3-bar-item w3-button w3-padding-large">LOCATION</a>
+  <a href="#time" class="w3-bar-item w3-button w3-padding-large">PROVENANCE</a>
+  <a href="#storyline" class="w3-bar-item w3-button w3-padding-large">STORYLINE</a>
+  <a href="#lost" class="w3-bar-item w3-button w3-padding-large w3-hide-small">WANTED</a>
+</div>
+
+  <!-- Collection Section -->
+  <div class="w3-black" id="description">
+  <div class="w3-container w3-content w3-center w3-padding-64" style="width:100%" id="description">
+    <h2 class="w3-wide w3-center">COLLECTION OF <br> BARON MÓR LIPÓT HERZOG (1869-1934)</h2>
+    <p class="w3-opacity w3-center">A Jewish Art Collector in the Pre-War Hungary</p>
+    <p class="w3-justify w3-block">Baron Mór Lipót Herzog's collection, at its zenith, comprised about 2500 artworks, displayed in the Andrássy Avenue palace of the Andrássy family. The private collection, showcasing world-renowned masters, included masterpieces by El Greco, Lucas Cranach, Corot, and Renoir, among others. Mór Lipót Herzog began dealing with artworks under the influence of another famous art collector-businessman of the era, Marcell Nemes (1866–1930). The wealth of the Herzog family, largely derived from tobacco production, allowed them to acquire not only popular works but also unconventional pieces on the international art market. Mór Lipót Herzog later purchased valuable pieces from Nemes's collection, including the now globally famous paintings by El Greco.
+        <br>
+        <br>
+        The reputation and recognition of the collection gradually grew in the 1920s, leading to the creation of an illustrated catalogue featuring the finest pieces in 1927. The expansion of the collection came to a halt with the death of Mór Lipót Herzog in 1934. The artworks were inherited by his wife, Janka Hatvany-Deutsch, and their three children: Erzsébet Herzog, András Herzog, and István Herzog. By the end of World War II, the collection had been dispersed. Some parts still adorn Hungarian museums and other public institutions. Another group of artworks was taken to the Soviet Union at that time, and some pieces have yet to resurface. Remaining artworks are found in Germany, Poland, and lost works occasionally reappear in international and domestic auctions. The heirs of Herzog tried for many years to recover art looted from their antecendent. In 2010, his heirs sued the Hungarian government for the return of more than 40 paintings seized during World War II, valued in excess of US$ 100 million.
+        <br>
+        <br>
+        Although the collection contained several handicrafts and pieces of furniture, only a selection of paintings by international artists is presented here, that are depicted in the publication: Elveszett örökség (Lost Heritage), edited by Péter Molnos, Kieselbach Galéria, Budapest, 2017, ISBN: 978-615-5199-13-4. This website aims to show different approaches to presenting a private collection: providing a description of the collector and the collection, presenting the collection in an image gallery, showing an overview of the dataset with data visualizations, localizing the artworks on a map, giving information on provenance with a timeline, diving deeper into the history of one art piece with a storytelling approach, and presenting the lost artworks in a grid gallery.   </p> 
+    <!-- Gallery Section <div class="w3-row w3-padding-32">-->
+      <div class="w3-black" id="gallery">
+        <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="gallery">
+          <h2 class="w3-wide w3-center">GALLERY</h2>
+          <p class="w3-opacity w3-center">Selected artworks. For more information click on the image.</p>
+          <div class="w3-container">
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Giovanni_Santi_-_Christ_supported_by_two_angels.jpg#/media/File:Giovanni_Santi_-_Christ_supported_by_two_angels.jpg" target="_blank">
+                <img src="Santi.jpeg" style="width:100%">
+              </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px;">Giovanni Santi: Christ Supported by Two Angels,<br>around 1490</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://www.mfab.hu/artworks/10029/" target="_blank">
+              <img src="Udine.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Giovanni da Udine: Madonna and Child with Saint John the Baptist and Saint Jerome, around 1500</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Lucas_Cranach_d._Ä._-_The_Annunciation_to_Joachim_-_WGA05664.jpg#/media/File:Lucas_Cranach_d._Ä._-_The_Annunciation_to_Joachim_-_WGA05664.jpg" target="_blank">
+              <img src="Cranach.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Lucas Cranach, the Elder: The Annunciation to Joachim, 1518</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Bartholomäus_Bruyn_(I)_-_Portrait_of_Scholar_Petrus_von_Clapis_-_WGA03661.jpg#/media/File:Bartholomäus_Bruyn_(I)_-_Portrait_of_Scholar_Petrus_von_Clapis_-_WGA03661.jpg" target="_blank">
+              <img src="Bruyn_the Elder.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Barthel Bruyn, the Elder: Portrait of Petrus von Clapis,<br>around 1530</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:El_Greco_-_St._Bartholomew_-_Google_Art_Project.jpg#/media/File:El_Greco_-_St._Bartholomew_-_Google_Art_Project.jpg" target="_blank">
+              <img src="Greco_1.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">El Greco: Saint Bartholomew Apostle, around 1600</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:El_Greco_-_St._James_the_Greater_-_Google_Art_Project.jpg#/media/File:El_Greco_-_St._James_the_Greater_-_Google_Art_Project.jpg" target="_blank">
+              <img src="Greco_2.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">El Greco: The Apostole Saint James the Great, around 1600</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:El_Greco_-_St._Andrew_-_Google_Art_Project.jpg#/media/File:El_Greco_-_St._Andrew_-_Google_Art_Project.jpg" target="_blank">
+              <img src="Greco_3.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">El Greco: St. Andrew, 1610-14</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://www.mfab.hu/artworks/9825/" target="_blank">
+              <img src="Greco_5.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">El Greco: The Disrobing of Christ (El Expolio), 1579-80</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:El_Greco_-_The_Agony_in_the_Garden_-_WGA10581.jpg#/media/File:El_Greco_-_The_Agony_in_the_Garden_-_WGA10581.jpg" target="_blank">
+              <img src="Greco_4.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">El Greco: The Agony in the Garden, 1610-15</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Francisco_de_Zurbarán_033.jpg#/media/File:Francisco_de_Zurbarán_033.jpg" target="_blank">
+              <img src="Zubaran.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Francisco de Zurbarán: Saint Andrew, 1635-40</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Portrait_of_a_Man_by_Frans_Hals,_1634,_Timken_Museum_of_Art.JPG#/media/File:Portrait_of_a_Man_by_Frans_Hals,_1634,_Timken_Museum_of_Art.JPG" target="_blank">
+              <img src="Hals.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Frans Hals: Portrait of a Man, 1634</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Retrato_del_pr%C3%ADncipe_Baltasar_Carlos_-_Alonso_Cano.jpg#/media/File:Retrato_del_pr%C3%ADncipe_Baltasar_Carlos_-_Alonso_Cano.jpg" target="_blank">
+              <img src="Cano.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Alonso Cano: Portrait of Prince Don Balthasar Carlos, 1633-34</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Philips_Koninck_-_Panoramic_River_Landscape_-_WGA12243.jpg#/media/File:Philips_Koninck_-_Panoramic_River_Landscape_-_WGA12243.jpg" target="_blank">
+              <img src="Koninck.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Philips de Koninck: Panoramic River Landscape with Hunters, around 1664</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Francisco_de_Goya_-_Bildnis_Don_Juan_Bautista_de_Goicoechea_y_Urrutia_-_2515_-_Staatliche_Kunsthalle_Karlsruhe.jpg#/media/File:Francisco_de_Goya_-_Bildnis_Don_Juan_Bautista_de_Goicoechea_y_Urrutia_-_2515_-_Staatliche_Kunsthalle_Karlsruhe.jpg" target="_blank">
+              <img src="Goya_1.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Francisco de Goya: Portrait of Don Juan Bautista de Goicoechea y Urrutia, 1815</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://ar.culture.ru/en/subject/karnaval" target="_blank">
+              <img src="Goya_2.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Francisco de Goya: Carnival Scene, 1812-16</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:The_Spring_in_Fouras_Gustave_Courbet.jpg#/media/File:The_Spring_in_Fouras_Gustave_Courbet.jpg" target="_blank">
+              <img src="Courbet.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Gustav Courbet: The Spring of Léri in Chassagne, 1863</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Jean-Baptiste-Camille_Corot_-_Girl_with_Mandolin_-_3-1939_-_Saint_Louis_Art_Museum.jpg#/media/File:Jean-Baptiste-Camille_Corot_-_Girl_with_Mandolin_-_3-1939_-_Saint_Louis_Art_Museum.jpg" target="_blank">
+              <img src="Corot_1.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Jean-Baptiste-Camille Corot: Girl with Mandolin,<br>1860-65</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Woman_with_daisies_Camille_Corot.jpg#/media/File:Woman_with_daisies_Camille_Corot.jpg" target="_blank">
+              <img src="Corot_2.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Jean-Baptiste-Camille Corot: Lady with Daisies, around 1870</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Édouard_Manet,_The_Rue_Mosnier_with_Flags,_1878.jpg#/media/File:Édouard_Manet,_The_Rue_Mosnier_with_Flags,_1878.jpg" target="_blank">
+              <img src="Manet_1.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Édouard Manet: The Rue Mosnier with Flags, 1878</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Edouard_Manet_-_La_Négresse.jpg#/media/File:Edouard_Manet_-_La_Négresse.jpg" target="_blank">
+              <img src="Manet_2.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Édouard Manet: La Négresse - Portrait of Laure, 1862-63</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Claude_Monet_-_Three_Fishing_Boats_-_Google_Art_Project.jpg#/media/File:Claude_Monet_-_Three_Fishing_Boats_-_Google_Art_Project.jpg" target="_blank">
+              <img src="Monet.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Claude Monet: Three Fishing Boats, 1886</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://www.mfab.hu/artworks/portrait-of-a-young-woman-5/" target="_blank">
+              <img src="Renoir_1.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Pierre-Auguste Renoir: Portrait of a Young Woman, 1892</span>
+              </div>
+            </div>
+            <div class="w3-display-container mySlides2">
+              <a href="https://commons.wikimedia.org/wiki/File:Pierre-Auguste_Renoir_-_Henriot_Family_(La_Famille_Henriot)_-_BF949_-_Barnes_Foundation.jpg#/media/File:Pierre-Auguste_Renoir_-_Henriot_Family_(La_Famille_Henriot)_-_BF949_-_Barnes_Foundation.jpg" target="_blank">
+              <img src="Renoir_2.jpeg" style="width:100%">
+            </a>
+              <div class="w3-display-bottommiddle w3-container w3-padding-24">
+                <span style="color:white; font-size: 11px">Pierre-Auguste Renoir: Henriot Family, around 1876</span>
+              </div>
+            </div>
+          
+    <!-- Slideshow next/previous buttons -->
+    <div class="w3-container w3-dark-grey w3-padding w3-xlarge">
+      <div class="w3-left" onclick="plusDivs(-1)"><i class="fa fa-arrow-circle-left w3-hover-text-teal"></i></div>
+      <div class="w3-right" onclick="plusDivs(1)"><i class="fa fa-arrow-circle-right w3-hover-text-teal"></i></div>
+    
+      <div class="w3-center">
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(1)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(2)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(3)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(4)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(5)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(6)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(7)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(8)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(9)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(10)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(11)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(12)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(13)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(14)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(15)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(16)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(17)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(18)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(19)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(20)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(21)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(22)"></span>
+        <span class="w3-tag demodots w3-border w3-transparent w3-hover-white" onclick="currentDiv(23)"></span>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var slideIndex = 1;
+  showSlides(slideIndex);
+
+  // Next/previous controls
+  function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
+
+  // Thumbnail image controls
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+
+  function showSlides(n) {
+    var i;
+    var slides = document.getElementsByClassName("mySlides2");
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";
+    }
+    slides[slideIndex-1].style.display = "block";
+  }
+
+  // Keyboard controls
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "ArrowLeft") {;
+      plusDivs(-1);
+    } else if (event.key === "ArrowRight") {
+      plusDivs(1);
+    }
+  });
+</script>
+      </div>
+      </div>
+    </div>
+  </div>
+  <!-- The Data Section -->
+    <div class="w3-container w3-content w3-padding-64" id="data">
+      <h2 class="w3-wide w3-center">DATA</h2>
+      <p class="w3-opacity w3-center">Data collected on 40 paintings</p><br>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawChart);
+  
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Country', 'Number of artworks', { role: 'style' }],
+            ['France', 14, 'color: #798994'],
+            ['Netherland', 7, 'color: #798994'],
+            ['Greece', 4, 'color: #798994'],
+            ['Italy', 4, 'color: #798994'],
+            ['Spain', 4, 'color: #798994'],
+            ['Germany', 3, 'color: #798994'],
+            ['Unknown', 2, 'color: #798994'],
+            ['Belgium', 1, 'color: #798994'],
+          ]);
+  
+          var options = {
+            title: 'Nationality of the artists represented in the collection',
+            bars: 'vertical', // Required for Material Bar Charts.
+            legend: { position: 'none' }
+          };
+  
+          var chart = new google.visualization.BarChart(document.getElementById('barchart_material'));
+          chart.draw(data, options);
+        }
+      </script>
+      <div id="barchart_material" style="max-width: 900px; height: 500px;"></div>
+   
+
+ <!-- Donut Chart -->
+ <div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Location', 'Percentage of artworks'],
+          ['Museum', 67.5],
+          ['Lost',      22.5],
+          ['Private Collection',  10],
+        ]);
+
+        var options = {
+          title: 'Current location of the selected paintings',
+          pieHole: 0.4,
+          slices: {
+            0: { color: '#003E51' },
+            1: { color: '#0C222E' },
+            2: { color: '#62196a'},}
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+        chart.draw(data, options);
+      }
+    </script>
+    </div> 
+     <div id="donutchart" class="center-chart" style="max-width: 900px; height: 400px;"></div>
+</div>
+</div>
+<!-- The Map Section -->
+</div>
+<div class="w3-white" id="leafletmap"></div>
+<div class="w3-container w3-content" style="width:100%;max-height:500px" id="leafletmap">
+  <h2 class="w3-wide w3-center">LOCATION</h2>
+    <h3 class="w3-wide w3-center">Map of the Current Location of the Artworks</h3>
+    <p class="w3-opacity w3-center">Click on the markers for more information. The red marker stands for Herzog.</p><br>
+  </div>
+<!-- Include Leaflet JavaScript -->
+<div style="width:100%; height:500px;"id="map"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Create a Leaflet map with a custom tile layer for a lighter grey background
+        const bounds = [[20, -150], [65, 100]];
+        const defaultView = [51.505, -0.09]; // Default view coordinates
+        const defaultZoom = 3; // Default zoom level
+        const map = L.map('map', {
+        worldCopyJump: false, // Prevent map from repeating
+        minZoom: 2, // Set the minimum zoom level
+        maxZoom: 5, // Set a reasonable maximum zoom level
+        maxBounds: bounds, // Set the geographical boundaries
+        maxBoundsViscosity: 1.0 // Ensures the map stays within the bounds
+        }).setView(defaultView, defaultZoom);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(map);
+
+        // Define artworks data
+        const artworks = [
+            {imageUrl: "Cano.jpeg", artworkID: 222, artistName: "Cano Alonso", artworkTitle: "The Infante Don Baltasar Carlos", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9123/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Bruyn_the Elder.jpeg", artworkID: 236, artistName: "Barthel Bruyn, the Elder", artworkTitle: "Portrait of Petrus von Clapis", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/10271/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Monet.jpeg", artworkID: 238, artistName: "Claude Monet", artworkTitle: "Three Fishing Boats", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/600/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Manet_1.jpeg", artworkID: 216, artistName: "Édouard Manet", artworkTitle: "The Rue Mosnier with Flags", FCollectorName: "Mór Lipót Herzog", LCollectorName: "J. Paul Getty Museum", website: "https://www.getty.edu/art/collection/object/103RJM#full-artwork-details", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [34.052235, -118.243683]},
+            {imageUrl: "Manet_2.jpeg", artworkID: 215, artistName: "Édouard Manet", artworkTitle: "La Négresse - Portrait of Laure", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Pinacoteca Giovanni e Marella Agnelli", website:"https://www.pinacoteca-agnelli.it/collezione/la-negresse/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [45.06582, 7.44334]},
+            {imageUrl: "Greco_1.jpeg", artworkID: 201, artistName: "El Greco", artworkTitle: "Saint Bartholomew Apostle", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/8775/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Greco_3.jpeg", artworkID: 202, artistName: "El Greco", artworkTitle: "The Apostole Saint James the Great", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Grabar Restaurator Institute", website: "http://www.grabar.ru/index.php?lang=en", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [55.751244, 37.618423]},
+            {imageUrl: "Greco_4.jpeg", artworkID: 219, artistName: "El Greco", artworkTitle: "The Disrobing of Christ (El Expolio)", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9825/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Greco_2.jpeg", artworkID: 220, artistName: "El Greco", artworkTitle: "Saint Andrew", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/10403/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Greco_5.jpeg", artworkID: 221, artistName: "El Greco", artworkTitle: "Christ on the Mount of Olives", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9734/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Goya_1.jpeg", artworkID: 217, artistName: "Francisco de Goya", artworkTitle: "Portrait of Don Juan Bautista de Goicoechea y Urrutia", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Staatliche Kunsthalle Karslruhe", website: "https://www.kunsthalle-karlsruhe.de/kunstwerke/Francisco-de-Goya/Bildnis-Don-Juan-Bautista-de-Goicoechea-y-Urrutia/4D9598524E5A76E9AEAEF2A6129EA8B3/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [49.006889, 8.403653]},
+            {imageUrl: "Goya_2.jpeg", artworkID: 223, artistName: "Francisco de Goya", artworkTitle: "Carnival Scene", FCollectorName: "Mór Lipót Herzog", LCollectorName: "The Puskin State Museum of Fine Arts", website: "https://pushkinmuseum.art/?lang=en", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [55.751244, 37.618423]},
+            {imageUrl: "Zubaran.jpeg", artworkID: 234, artistName: "Francisco de Zurbarán", artworkTitle: "Saint Andrew", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/10404/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Hals.jpeg", artworkID: 214, artistName: "Frans Hals", artworkTitle: "Portrait of a Man", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Timken Museum of Art", website: "https://www.timkenmuseum.org/collection/portrait-of-a-man/",  firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [32.71533,  -117.15726]},
+            {imageUrl: "Udine.jpeg", artworkID: 205, artistName: "Giovanni da Udine", artworkTitle: "Madonna and Child with Saint John the Baptist and Saint Jerome", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9123/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Santi.jpeg", artworkID: 233, artistName: "Giovanni Santi", artworkTitle: "The Man of Sorrows (Vir Dolorum)", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9766/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Courbet.jpeg", artworkID: 237, artistName: "Gustave Courbet", artworkTitle: "The Spring of Léri in Chassagne", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/113/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Chardin.jpeg", artworkID: 239, artistName: "French painter", artworkTitle: "Still Life with Turkey", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/9078/",  firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Corot_1.jpeg", artworkID: 225, artistName: "Jean-Baptiste-Camille Corot", artworkTitle: "Girl with Mandolin", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Saint Louis Art Museum", website: "https://www.slam.org/collection/objects/34059/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [38.627003, -90.199402]},
+            {imageUrl: "Corot_2.jpeg", artworkID: 224, artistName: "Jean-Baptiste-Camille Corot", artworkTitle: "Lady with Daisies", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/108/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Cranach.jpeg", artworkID: 232, artistName: "Lucas Cranach, the Elder", artworkTitle: "The Annunciation to Joachim", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/12189/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Gauguin.jpeg", artworkID: 230, artistName: "Paul Gauguin", artworkTitle: "Still Life with Profile of Laval", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Indianapolis Museum of Art", website: "https://collections.discovernewfields.org/art/artwork/82261", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [39.791, -86.148003]},
+            {imageUrl: "Koninck.jpeg", artworkID: 213, artistName: "Philips de Koninck", artworkTitle: "Panoramic River Landscape with Hunters", FCollectorName: "Mór Lipót Herzog", LCollectorName: "The Agnes Etherington Art Center", website: "https://agnes.queensu.ca/explore/collections/object/panoramic-landscape-with-mountains/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [44.233334, -76.5]},
+            {imageUrl: "Fiorentino.jpg", artworkID: 235, artistName: "The Lippi-Pesellino Imitator", artworkTitle: "Madonna with Child, with St. John, St. Catherine and Angels", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/10003/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Renoir_1.jpeg", artworkID: 227, artistName: "Pierre-Auguste Renoir", artworkTitle: "Portrait of a Young Woman", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Szépművészeti Múzeum", website: "https://www.mfab.hu/artworks/689/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [47.497913, 19.040236]},
+            {imageUrl: "Renoir_3.jpg", artworkID: 228, artistName: "Pierre-Auguste Renoir", artworkTitle: "Sitting Woman with Flowers", FCollectorName: "Mór Lipót Herzog", LCollectorName: "Nizhny Novgorod State Art Museum", website: "https://artmuseumnn.ru", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [56.329419894249156, 44.00691480885772]},
+            {imageUrl: "Renoir_2.jpeg", artworkID: 229, artistName: "Pierre-Auguste Renoir", artworkTitle: "Henriot Family", FCollectorName: "Mór Lipót Herzog", LCollectorName: "The Barnes Foundation, Merion", website: "https://collection.barnesfoundation.org/objects/6940/Henriot-Family-(La-Famille-Henriot)/", firstcollection: [47.51031090555776, 19.071508862101414], lastcollection: [39.952583, -75.165222]},
+        ];
+
+        const markers = [];
+        const polylines = [];
+
+        // Group artworks by their last collection location
+        const groupedArtworks = artworks.reduce((acc, artwork) => {
+            const key = artwork.LCollectorName;
+            if (!acc[key]) {
+                acc[key] = [];
+            }
+            acc[key].push(artwork);
+            return acc;
+        }, {});
+
+        // Function to add markers and polylines
+        const addMarkersAndPolylines = (filteredArtworks) => {
+            // Clear existing markers and polylines
+            markers.forEach(marker => map.removeLayer(marker));
+            polylines.forEach(polyline => map.removeLayer(polyline));
+            markers.length = 0;
+            polylines.length = 0;
+
+            for (const key in filteredArtworks) {
+                const artworksInGroup = filteredArtworks[key];
+                const lastcollection = artworksInGroup[0].lastcollection;
+
+                // Create a combined popup content for last collection marker
+                const lastPopupContent = artworksInGroup.map(artwork => `
+                    <img src="${artwork.imageUrl}" alt="${artwork.artworkTitle}" style="width:40%;height:auto;"/><br>
+                    <b>Artwork ID:</b> ${artwork.artworkID}<br>
+                    <b>Artist:</b> ${artwork.artistName}<br>
+                    <b>Title:</b> ${artwork.artworkTitle}<br>
+                    <b>First Collection:</b> ${artwork.FCollectorName}<br>
+                    <b>Last Collection:</b> <a href="${artwork.website}" target="_blank">${artwork.LCollectorName}</a>
+                `).join('<br><br>');
+
+                const firstMarkerIcon = L.icon({
+                    iconUrl: 'first-collection-icon.png', // URL to the first collection marker icon
+                    iconSize: [25, 29], // size of the icon
+                    iconAnchor: [12, 29], // point of the icon which will correspond to marker's location
+                    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+                });
+
+                const lastMarkerIcon = L.icon({
+                    iconUrl: 'last-collection-icon.png', // URL to the last collection marker icon
+                    iconSize: [25, 29], // size of the icon
+                    iconAnchor: [12, 29], // point of the icon which will correspond to marker's location
+                    popupAnchor: [1, -34], // point from which the popup should open relative to the iconAnchor
+                });
+
+                // Create the marker for the last collection location
+                const lastMarker = L.marker(lastcollection, { icon: lastMarkerIcon }).addTo(map).bindPopup(`<div class="popup-content">${lastPopupContent}</div>`);
+                markers.push(lastMarker);
+
+                // Create markers for each first collection and corresponding polylines
+                artworksInGroup.forEach(artwork => {
+                    const firstcollection = artwork.firstcollection;
+
+                    const firstPopupContent = `
+                        <img src="${artwork.imageUrl}" alt="${artwork.artworkTitle}" style="width:40%;height:auto;"/><br>
+                        <b>Artwork ID:</b> ${artwork.artworkID}<br>
+                        <b>Artist:</b> ${artwork.artistName}<br>
+                        <b>Title:</b> ${artwork.artworkTitle}<br>
+                        <b>First Collection:</b> ${artwork.FCollectorName}<br>
+                        <b>Last Collection:</b> <a href="${artwork.website}" target="_blank">${artwork.LCollectorName}</a>
+                    `;
+
+                    const firstMarker = L.marker(firstcollection, { icon: firstMarkerIcon }).addTo(map).bindPopup(`<div class="popup-content">${firstPopupContent}</div>`);
+                    markers.push(firstMarker);
+
+                    // Create a polyline between first collection and last collection
+                    const polyline = L.polyline([firstcollection, lastcollection], {
+                        color: 'grey',
+                        weight: 2,
+                        opacity: 0.6
+                    }).addTo(map);
+                    polylines.push(polyline);
+
+                    // Attach click event to highlight the associated polyline
+                    firstMarker.on('click', function() {
+                        highlightPolyline(polyline);
+                    });
+
+                    lastMarker.on('click', function() {
+                        highlightPolyline(polyline);
+                    });
+                });
+            }
+        };
+
+        // Function to highlight polyline and manage highlighting state
+        let highlightedPolyline = null;
+        function highlightPolyline(polyline) {
+            // Reset style of previously highlighted polyline
+            if (highlightedPolyline) {
+                highlightedPolyline.setStyle({ weight: 1, color: 'grey' });
+            }
+
+            // Highlight the new polyline
+            polyline.setStyle({ weight: 3, color: 'red' });
+            polyline.bringToFront(); // Bring polyline to the front
+
+            // Update the currently highlighted polyline
+            highlightedPolyline = polyline;
+        }
+
+        // Add initial markers and polylines
+        addMarkersAndPolylines(groupedArtworks);
+
+        // Add custom reset button control with icon
+        const resetControl = L.Control.extend({
+            options: {
+                position: 'topleft' // Position of the control
+            },
+            onAdd: function(map) {
+                const container = L.DomUtil.create('div', 'leaflet-control-reset leaflet-bar');
+                const img = L.DomUtil.create('img', 'reset-icon');
+                img.src = 'reset-icon.png'; // Replace with the URL to your reset icon
+                img.alt = 'Reset View';
+                container.appendChild(img);
+
+                L.DomEvent.on(container, 'click', function() {
+                    map.setView(defaultView, defaultZoom);
+                });
+
+                return container;
+            }
+        });
+
+        map.addControl(new resetControl());
+
+        // Filter functionality
+        document.getElementById('filter').addEventListener('change', function() {
+            const filterValue = this.value;
+            if (filterValue === 'all') {
+                addMarkersAndPolylines(groupedArtworks);
+            } else {
+                const filteredArtworks = {
+                    [filterValue]: groupedArtworks[filterValue]
+                };
+                addMarkersAndPolylines(filteredArtworks);
+            }
+        });
+    });
+</script>
+ </div>
+</div>
+    <!-- Timeline Section -->
+    <div class="w3-container w3-padding-64" style="width:100%;max-height:600px" id="time">
+    <h2 class="w3-wide w3-center" >PROVENANCE</h2>
+      <p class="w3-opacity w3-center">The provenance of 8 artworks are known completely. Discover the exiting provenance of the 8th artwork in detail in the storytelling section below.</p>
+      <p class="w3-opacity w3-center"><i>Only the year of purchase is known. The days and months are set as a default to the 1st of February.</i></p><br>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["timeline"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var container = document.getElementById('example3.1');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+        dataTable.addColumn({ type: 'string', id: 'Position' });
+    dataTable.addColumn({ type: 'string', id: 'Name' });
+    dataTable.addColumn({ type: 'string', id: 'style', role: 'style' });
+    dataTable.addColumn({ type: 'date', id: 'Start' });
+    dataTable.addColumn({ type: 'date', id: 'End' });
+    dataTable.addRows([
+      [ 'Jean-Baptiste-Camille Corot: Girl with Mandolin, 1860-65', 'Mór Lipót Herzog', '#813021', new Date(1911, 1, 1), new Date(1923, 1, 1) ],
+      [ 'Jean-Baptiste-Camille Corot: Girl with Mandolin, 1860-65', 'Wildenstein & Co. and Paul Rosenberg', '#5A1714', new Date(1923, 1, 1), new Date(1939, 1, 1) ],
+      [ 'Jean-Baptiste-Camille Corot: Girl with Mandolin, 1860-65', 'Saint Louis Art Museum', '#003E51', new Date(1939, 1, 1), new Date(2024, 1, 1) ],
+      [ 'Gustav Courbet: Reclining Nude, 1862', 'Mór Lipót Herzog', '#813021', new Date(1899, 1, 1), new Date(1913, 1, 1) ],
+      [ 'Gustav Courbet: Reclining Nude, 1862', 'Marcell Nemes', '#5A1714', new Date(1913, 1, 1), new Date(1927, 1, 1) ],
+      [ 'Gustav Courbet: Reclining Nude, 1862', 'Baron Ferenc Hatvany', '#798994', new Date(1927, 1, 1), new Date(1943, 1, 1) ],
+      [ 'Gustav Courbet: Reclining Nude, 1862', 'Confiscated by the National Socialists', '#09303F', new Date(1943, 1, 1), new Date(2005, 1, 1) ],
+      [ 'Gustav Courbet: Reclining Nude, 1862', 'Hatvany Heirs', '#12512C', new Date(2005, 1, 1), new Date(2024, 1, 1) ],
+      [ 'Hugo van der Goes: Maria with Child, 1460', 'Mór Lipót Herzog', '#813021', new Date(1911, 1, 1), new Date(1934, 1, 1) ],
+      [ 'Hugo van der Goes: Maria with Child, 1460', 'Baroness Mór Lipót Herzog', '#5A1714', new Date(1934, 1, 1), new Date(1940, 1, 1) ],
+      [ 'Hugo van der Goes: Maria with Child, 1460', 'Herzog siblings', '#12512C', new Date(1940, 1, 1), new Date(1940, 12, 1) ],
+      [ 'Hugo van der Goes: Maria with Child, 1460', 'Lost', '#0C222E', new Date(1940, 12, 1), new Date(2024, 1, 1) ],
+      [ 'Frans Hals: Portrait of a Man, 1634', 'Mór Lipót Herzog', '#813021', new Date(1913, 1, 1), new Date(1936, 1, 1) ],
+      [ 'Frans Hals: Portrait of a Man, 1634', 'Wildenstein & Co.', '#5A1714', new Date(1936, 1, 1), new Date(1955, 1, 1) ],
+      [ 'Frans Hals: Portrait of a Man, 1634', 'Timken Museum of Art', '#003E51', new Date(1955, 1, 1), new Date(2024, 1, 1) ],
+      [ 'Édouard Manet: The Rue Mosnier with Flags, 1878', 'Mór Lipót Herzog', '#813021', new Date(1913, 1, 1), new Date(1955, 1, 1) ],
+      [ 'Édouard Manet: The Rue Mosnier with Flags, 1878', 'Jakob Goldschmidt', '#5A1714', new Date(1955, 1, 1), new Date(1958, 1, 1) ],
+      [ 'Édouard Manet: The Rue Mosnier with Flags, 1878', 'Paul Mellon', '#798994', new Date(1958, 1, 1), new Date(1989, 1, 1) ],
+      [ 'Édouard Manet: The Rue Mosnier with Flags, 1878', 'J. Paul Getty Museum', '#003E51', new Date(1989, 1, 1), new Date(2024, 1, 1) ],
+      [ 'Claude Monet: In the Garden, 1875', 'Mór Lipót Herzog', '#813021', new Date(1911, 1, 1), new Date(1928, 1, 1) ],
+      [ 'Claude Monet: In the Garden, 1875', 'Kurt M. and Henriette H. Hirschland', '#5A1714', new Date(1928, 1, 1), new Date(1960, 1, 1) ],
+      [ 'Claude Monet: In the Garden, 1875', 'Jacques Lindon', '#798994', new Date(1960, 1, 1), new Date(1965, 1, 1) ],
+      [ 'Claude Monet: In the Garden, 1875', 'Mr. and Mrs. David Bakalar', '#004B3E', new Date(1965, 1, 1), new Date(1984, 1, 1)],
+      [ 'Claude Monet: In the Garden, 1875', 'Private Collection','#62196a', new Date(1984, 1, 1), new Date(2024, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'Mór Lipót Herzog','#813021', new Date(1921, 1, 1), new Date(1938, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'András Herzog', '#5A1714', new Date(1938, 1, 1), new Date(1941, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'Dr. Hans Posse', '#798994', new Date(1941, 1, 1), new Date(1945, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'Wiesbaden Central Collecting Point', '#004B3E', new Date(1945, 1, 1), new Date(1966, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'Staatliche Museen Kassel', '#003E51', new Date(1966, 1, 1), new Date(2010, 1, 1)],
+      [ 'Georg Pencz: Portrait of Sigismund Baldinger, 1545', 'Heirs of Baron Herzog', '#12512C', new Date(2010, 1, 1), new Date(2024, 1, 1)],
+        ]);
+    
+        var options = {
+          timeline: {rowLabelStyle: { fontName: 'Lato', fontSize: 10 },
+                     barLabelStyle: { fontName: 'Lato', fontSize: 10 } },
+            };
+
+        chart.draw(dataTable, options);
+      }
+    </script>
+    
+    <div id="example3.1" style="width: 100%; height: 500px; white-space: pre-wrap"></div>
+</script>
+</div>
+<!-- Storyline-->
+<div class="w3-black" id="storyline">
+  <div class="w3-container w3-content w3-center w3-padding-64" style="width:100%" id="storyline">
+  <h2 class="w3-wide w3-center">STORYLINE</h2>
+  <p class="w3-opacity w3-center">A survivor masterpiece</p><br>
+  <p class="w3-center">Paul Gauguin's "Still Life with the Profile of Laval" is the artwork with the most detailed provenance and had the most owner over the 20th century. It's exiting journey represents the turbulent political situation in Hungary and makes the masterpiece a real survivor.</p><br>
+</div>
+<div>
+<iframe src='https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1KjsJiho43m_HahFwAvhvTNA-B3osxUIyMpwjdb5pu_w&font=Default&lang=en&initial_zoom=2&height=650' width='100%' height='650' webkitallowfullscreen mozallowfullscreen allowfullscreen frameborder='0'></iframe>
+</div>
+</div>   
+ <!-- The Wanted Section -->
+ <div class="w3-black" id="lost">
+  <div class="w3-container w3-content w3-center w3-padding-64">
+  <h1 style="color: white; font-size: 40px">W A N T E D</h1>
+  <p class="w3-opacity w3-center">The location of nine paintings are still unknown. There are reproductions of seven of them. If you have information of their current location, please don't hesitate to contact Alycia Regan Benenati: ABenenati@kasowitz.com</p><br>
+  <div class="row"> 
+    <div class="column">
+      <div class="container">
+        <img src="de_Predis_Lost.jpeg" alt="de Predis Lost">
+        <div class="overlay">Giovanni Ambrogio de Predis, Portrait of Bianca Maria Sforza , around 1500 </div>
+      </div>
+      <div class="container">
+        <img src="Cranach_Lost.jpeg" alt="Cranach Lost">
+        <div class="overlay">After Lucas Cranach, Old Man in Love, date unknown</div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="container">
+        <img src="ter_Boch_Lost.jpeg" alt="ter Boch Lost">
+        <div class="overlay">Gerard ter Boch, the Younger, Beautifying Lady, around 1655</div>
+      </div>
+      <div class="container">
+        <img src="van_der_Goes_Lost.jpeg" alt="van der Goes Lost">
+        <div class="overlay">Hugo van der Goes, Madonna with Child, around 1460</div>
+      </div>
+    </div> 
+    <div class="column">
+      <div class="container">
+        <img src="Uknown_Rembrandt_Lost.jpeg" alt="Unknown Rembrandt Lost">
+        <div class="overlay">Unknown, Copy of Rembrandt's Self Portrait, date unknown</div>
+      </div>
+      <div class="container">
+        <img src="Teniers_Lost.jpeg" alt="Teniers Lost">
+        <div class="overlay">David Teniers, the Younger, Outside a Tavern, around 1640</div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="container">
+        <img src="Dou_Lost.jpeg" alt="Dou Lost">
+        <div class="overlay">Gerrit Dou, Fruit Selling Girl, around 1650</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w3-container w3-padding-32 w3-center w3-opacity w3-light-grey w3-xlarge">
+  <p class="w3-medium">More about the <a href="https://hungarylootedart.com" target="_blank">Lawsuit</a></p>
+  <p class="w3-medium">Collection on <a href="https://commons.wikimedia.org/wiki/Category:Collection_of_Mór_Lipót_Herzog" target="_blank">Wikimedia</a></p>
+</footer>
+<script>
+// Automatic Slideshow - change image every 4 seconds
+var myIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}    
+  x[myIndex-1].style.display = "block";  
+  setTimeout(carousel, 4000);    
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+// When the user clicks anywhere outside of the modal, close it
+var modal = document.getElementById('ticketModal');
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+// Slideshow
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function currentDiv(n) {
+  showDivs(slideIndex = n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides2");
+  var dots = document.getElementsByClassName("demodots");
+  if (n > x.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = x.length} ;
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" w3-white", "");
+  }
+  x[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " w3-white";
+}
+</script>
+</div>
+</body>
+</html>
